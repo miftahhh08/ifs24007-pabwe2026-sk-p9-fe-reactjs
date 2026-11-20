@@ -1,5 +1,9 @@
 const TOKEN_KEY = 'delcom_blog_token'
 
+/* global __API_BASE__ */
+// Diisi saat build dari VITE_API_BASE_URL (mis. https://backend.s1if.cloud). Kosong = relatif (/api).
+const API_BASE = __API_BASE__
+
 export class ApiError extends Error {
   constructor(message, status = 0, data = null) {
     super(message)
@@ -29,7 +33,7 @@ export async function apiRequest(path, { method = 'GET', body, auth = true } = {
 
   let response
   try {
-    response = await fetch(`/api${path}`, {
+    response = await fetch(`${API_BASE}/api${path}`, {
       method,
       headers,
       body: hasBody ? JSON.stringify(body) : undefined,

@@ -23,3 +23,8 @@ Catatan deploy terpisah: karena `/api` hanya diproxy saat `npm run dev`, untuk p
 ## Rute SPA
 `/`, `/public`, `/posts/:slug`, `/author`, `/admin`, `/login`, `/register`.
 Id wajib login: `login-username`, `login-password`, `login-submit`.
+
+## Alamat backend saat produksi
+Set `VITE_API_BASE_URL` (lihat `.env.production` / `.env.example`) ke alamat backend, lalu `npm run build`.
+Backend sudah mengaktifkan CORS `*`, jadi frontend memanggil backend langsung tanpa proxy.
+Di hosting statis, aktifkan fallback SPA ke `index.html` (sudah ada di `vercel.json` dan `nginx.conf`).
