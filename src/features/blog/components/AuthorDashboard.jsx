@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useState } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react'
 import { IconDotsVertical, IconPlus, IconSparkles } from '@tabler/icons-react'
 import { confirmDialog, formatDate, showAlert, showToast } from '../../../helpers/toolsHelper'
 import { deletePost, getMyPost, getStats, listMyPosts, togglePublish } from '../api/blogApi'
 import PostStats from './PostStats'
-import PostModal from '../modals/PostModal'
-import AiPostGeneratorModal from '../modals/AiPostGeneratorModal'
+
+const PostModal = lazy(() => import('../modals/PostModal'))
+const AiPostGeneratorModal = lazy(() => import('../modals/AiPostGeneratorModal'))
 
 export default function AuthorDashboard({ dark }) {
   const [posts, setPosts] = useState([])
@@ -81,7 +82,7 @@ export default function AuthorDashboard({ dark }) {
 
       <PostStats stats={stats} />
 
-      <div className="card overflow-x-auto">
+      <div className="card overflow-x-auto" role="region" aria-label="Tabel daftar artikel" tabIndex={0}>
         <table className="w-full text-left text-sm">
           <caption className="sr-only">Daftar artikel milik Anda</caption>
           <thead className="bg-slate-200 text-slate-900 dark:bg-slate-800 dark:text-slate-100">
@@ -90,7 +91,7 @@ export default function AuthorDashboard({ dark }) {
               <th scope="col" className="px-4 py-3">Kategori</th>
               <th scope="col" className="px-4 py-3">Terbit</th>
               <th scope="col" className="px-4 py-3">Dibuat</th>
-              <th scope="col" className="px-4 py-3"><span className="sr-only">Aksi</span></th>
+              <th scope="col" className="px-4 py-3 text-right">Aksi</th>
             </tr>
           </thead>
           <tbody>
@@ -142,8 +143,10 @@ export default function AuthorDashboard({ dark }) {
         </table>
       </div>
 
-      {modal?.type === 'post' && <PostModal key={modal.draft?.title ?? modal.post?.id ?? 'new'} post={modal.post ?? null} draft={modal.draft ?? null} dark={dark} onClose={() => setModal(null)} onSaved={saved} />}
-      {modal?.type === 'ai' && <AiPostGeneratorModal onClose={() => setModal(null)} onApply={(draft) => setModal({ type: 'post', draft })} />}
+      <Suspense fallback={null}>
+        {modal?.type === 'post' && <PostModal key={modal.draft?.title ?? modal.post?.id ?? 'new'} post={modal.post ?? null} draft={modal.draft ?? null} dark={dark} onClose={() => setModal(null)} onSaved={saved} />}
+        {modal?.type === 'ai' && <AiPostGeneratorModal onClose={() => setModal(null)} onApply={(draft) => setModal({ type: 'post', draft })} />}
+      </Suspense>
     </main>
   )
 }

@@ -1,4 +1,4 @@
-import { ApiError, apiRequest, asList, getToken, setToken } from './apiHelper'
+import { ApiError, apiRequest, asList, getStoredUser, getToken, setToken } from './apiHelper'
 
 const okResponse = (data, status = 200) => ({ ok: status < 400, status, json: async () => data })
 
@@ -7,11 +7,15 @@ describe('apiHelper', () => {
     global.fetch = vi.fn()
   })
 
-  it('menyimpan dan menghapus token', () => {
-    setToken('abc')
+  it('menyimpan dan menghapus token serta profil pengguna', () => {
+    setToken('abc', { username: 'admin', role: 'admin' })
     expect(getToken()).toBe('abc')
+    expect(getStoredUser()).toEqual({ username: 'admin', role: 'admin' })
+    localStorage.setItem('delcom_blog_user', '{rusak')
+    expect(getStoredUser()).toBeNull()
     setToken(null)
     expect(getToken()).toBeNull()
+    expect(getStoredUser()).toBeNull()
   })
 
   it('mengirim GET tanpa body dan mengembalikan data', async () => {

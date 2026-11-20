@@ -1,15 +1,15 @@
 import { Suspense, lazy, useCallback, useEffect, useState } from 'react'
-import { getToken, setToken } from './helpers/apiHelper'
+import { getStoredUser, getToken, setToken } from './helpers/apiHelper'
 import useTheme from './hooks/useTheme'
 import { getProfile, logout } from './features/auth/api/authApi'
+import AuthPage from './features/auth/components/AuthPage'
+import AuthModal from './features/auth/modals/AuthModal'
 import StickyNavbar from './features/blog/components/StickyNavbar'
 import PublicArticleList from './features/blog/components/PublicArticleList'
+import AuthorDashboard from './features/blog/components/AuthorDashboard'
+import AdminDashboard from './features/admin/components/AdminDashboard'
 
-const AuthPage = lazy(() => import('./features/auth/components/AuthPage'))
-const AuthModal = lazy(() => import('./features/auth/modals/AuthModal'))
 const PublicArticleDetail = lazy(() => import('./features/blog/components/PublicArticleDetail'))
-const AuthorDashboard = lazy(() => import('./features/blog/components/AuthorDashboard'))
-const AdminDashboard = lazy(() => import('./features/admin/components/AdminDashboard'))
 
 export function parseRoute(path) {
   if (path === '/' || path === '/public') return { name: 'list' }
@@ -31,8 +31,8 @@ export function guard(route, user) {
 
 export default function App() {
   const [path, setPath] = useState(window.location.pathname)
-  const [user, setUser] = useState(null)
-  const [ready, setReady] = useState(!getToken())
+  const [user, setUser] = useState(getStoredUser)
+  const [ready, setReady] = useState(() => !getToken() || Boolean(getStoredUser()))
   const [showLogin, setShowLogin] = useState(false)
   const theme = useTheme()
 
@@ -51,8 +51,14 @@ export default function App() {
   useEffect(() => {
     if (!getToken()) return
     getProfile()
-      .then(setUser)
-      .catch(() => setToken(null))
+      .then((account) => {
+        setToken(getToken(), account)
+        setUser(account)
+      })
+      .catch(() => {
+        setToken(null)
+        setUser(null)
+      })
       .finally(() => setReady(true))
   }, [])
 
@@ -64,7 +70,7 @@ export default function App() {
   }, [redirect, navigate])
 
   const handleAuthenticated = ({ token, user: account }) => {
-    setToken(token)
+    setToken(token, account)
     setUser(account)
     setShowLogin(false)
     navigate(account.role === 'admin' ? '/admin' : '/author')
@@ -81,18 +87,21 @@ export default function App() {
     navigate('/')
   }
 
-  if (!ready || redirect) return <p role="status" className="p-8">Memuat...</p>
-
-  if (route.name === 'login' || route.name === 'register') {
+  if (!ready || redirect) {
     return (
-      <Suspense fallback={<p role="status" className="p-8">Memuat...</p>}>
-        <AuthPage mode={route.name} navigate={navigate} onAuthenticated={handleAuthenticated} />
-      </Suspense>
+      <main className="mx-auto max-w-7xl px-4 py-8">
+        <h1 className="text-2xl font-bold">Delcom Blog</h1>
+        <p role="status" className="muted mt-2">Memuat...</p>
+      </main>
     )
   }
 
+  if (route.name === 'login' || route.name === 'register') {
+    return <AuthPage mode={route.name} navigate={navigate} onAuthenticated={handleAuthenticated} />
+  }
+
   return (
-    <Suspense fallback={<p role="status" className="p-8">Memuat...</p>}>
+    <Suspense fallback={<main className="mx-auto max-w-7xl px-4 py-8"><h1 className="text-2xl font-bold">Delcom Blog</h1><p role="status" className="muted mt-2">Memuat...</p></main>}>
       <StickyNavbar user={user} navigate={navigate} onLogin={() => setShowLogin(true)} onLogout={handleLogout} theme={theme} />
       {route.name === 'list' && <PublicArticleList navigate={navigate} />}
       {route.name === 'detail' && <PublicArticleDetail slug={route.slug} navigate={navigate} />}
