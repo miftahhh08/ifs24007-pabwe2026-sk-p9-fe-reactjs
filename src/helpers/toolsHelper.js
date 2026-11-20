@@ -1,4 +1,4 @@
-import Swal from 'sweetalert2'
+const swal = () => import('sweetalert2').then((m) => m.default)
 
 export const CATEGORIES = ['Teknologi', 'Pendidikan', 'Gaya Hidup', 'Bisnis', 'Opini', 'Umum']
 
@@ -36,13 +36,14 @@ export const userCounts = (user) => ({
   published: user.total_published ?? user.published_posts ?? 0,
 })
 
-export const showAlert = (icon, title, text) => Swal.fire({ icon, title, text, confirmButtonColor: '#4338ca' })
+export const showAlert = async (icon, title, text) =>
+  (await swal()).fire({ icon, title, text, confirmButtonColor: '#4338ca' })
 
-export const showToast = (icon, title) =>
-  Swal.fire({ toast: true, position: 'top-end', icon, title, showConfirmButton: false, timer: 2500 })
+export const showToast = async (icon, title) =>
+  (await swal()).fire({ toast: true, position: 'top-end', icon, title, showConfirmButton: false, timer: 2500 })
 
 export async function confirmDialog(title, text) {
-  const result = await Swal.fire({
+  const result = await (await swal()).fire({
     icon: 'warning',
     title,
     text,

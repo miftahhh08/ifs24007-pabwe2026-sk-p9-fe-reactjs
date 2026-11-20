@@ -75,7 +75,7 @@ describe('App', () => {
     render(<App />)
     expect(screen.getByText('page:list')).toBeInTheDocument()
     await userEvent.click(screen.getByText('nav-detail'))
-    expect(screen.getByText('page:detail:a b')).toBeInTheDocument()
+    expect(await screen.findByText('page:detail:a b')).toBeInTheDocument()
     expect(window.location.pathname).toBe('/posts/a%20b')
     await userEvent.click(screen.getByText('nav-404'))
     expect(screen.getByRole('heading', { name: /404/ })).toBeInTheDocument()
@@ -83,11 +83,11 @@ describe('App', () => {
     expect(screen.getByText('page:list')).toBeInTheDocument()
   })
 
-  it('sinkron dengan tombol back (popstate)', () => {
+  it('sinkron dengan tombol back (popstate)', async () => {
     render(<App />)
     go('/posts/x')
     act(() => window.dispatchEvent(new PopStateEvent('popstate')))
-    expect(screen.getByText('page:detail:x')).toBeInTheDocument()
+    expect(await screen.findByText('page:detail:x')).toBeInTheDocument()
   })
 
   it('/author tanpa login diarahkan ke /login', async () => {
@@ -99,10 +99,10 @@ describe('App', () => {
     expect(screen.getByText('page:list')).toBeInTheDocument()
   })
 
-  it('/register menampilkan halaman daftar', () => {
+  it('/register menampilkan halaman daftar', async () => {
     go('/register')
     render(<App />)
-    expect(screen.getByText('auth:register')).toBeInTheDocument()
+    expect(await screen.findByText('auth:register')).toBeInTheDocument()
   })
 
   it('login sebagai penulis lalu logout', async () => {
@@ -131,15 +131,15 @@ describe('App', () => {
   it('modal login: buka, tutup, daftar, dan login', async () => {
     render(<App />)
     await userEvent.click(screen.getByText('nav-login'))
-    await userEvent.click(screen.getByText('modal-close'))
+    await userEvent.click(await screen.findByText('modal-close'))
     expect(screen.queryByRole('dialog')).toBeNull()
     await userEvent.click(screen.getByText('nav-login'))
-    await userEvent.click(screen.getByText('modal-register'))
-    expect(screen.getByText('auth:register')).toBeInTheDocument()
+    await userEvent.click(await screen.findByText('modal-register'))
+    expect(await screen.findByText('auth:register')).toBeInTheDocument()
     go('/')
     act(() => window.dispatchEvent(new PopStateEvent('popstate')))
     await userEvent.click(screen.getByText('nav-login'))
-    await userEvent.click(screen.getByText('modal-login'))
+    await userEvent.click(await screen.findByText('modal-login'))
     expect(await screen.findByText('page:author')).toBeInTheDocument()
   })
 

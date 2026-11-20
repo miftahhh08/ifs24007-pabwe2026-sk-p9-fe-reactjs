@@ -2,12 +2,39 @@ import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
+function inlineMainCss() {
+  return {
+    name: 'inline-main-css',
+    apply: 'build',
+    enforce: 'post',
+    transformIndexHtml(html, { bundle }) {
+      if (!bundle) return html
+      for (const [fileName, chunk] of Object.entries(bundle)) {
+        if (fileName.endsWith('.css') && chunk.type === 'asset') {
+          const escaped = fileName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+          const linkRe = new RegExp(`<link[^>]+href="[^"]*/${escaped}"[^>]*>`)
+          if (linkRe.test(html)) {
+            html = html.replace(linkRe, () => `<style>${chunk.source}</style>`)
+            delete bundle[fileName]
+          }
+        }
+      }
+      return html
+    },
+  }
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   return {
   // Alamat backend untuk build produksi (kosong = pakai proxy /api saat dev)
   define: { __API_BASE__: JSON.stringify(env.VITE_API_BASE_URL || '') },
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), inlineMainCss()],
+  build: {
+    target: 'esnext',
+    sourcemap: true,
+    modulePreload: { polyfill: false },
+  },
   server: {
     port: 5174,
     proxy: {

@@ -1,14 +1,15 @@
-import { useCallback, useEffect, useState } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react'
 import { getToken, setToken } from './helpers/apiHelper'
 import useTheme from './hooks/useTheme'
 import { getProfile, logout } from './features/auth/api/authApi'
-import AuthPage from './features/auth/components/AuthPage'
-import AuthModal from './features/auth/modals/AuthModal'
 import StickyNavbar from './features/blog/components/StickyNavbar'
 import PublicArticleList from './features/blog/components/PublicArticleList'
-import PublicArticleDetail from './features/blog/components/PublicArticleDetail'
-import AuthorDashboard from './features/blog/components/AuthorDashboard'
-import AdminDashboard from './features/admin/components/AdminDashboard'
+
+const AuthPage = lazy(() => import('./features/auth/components/AuthPage'))
+const AuthModal = lazy(() => import('./features/auth/modals/AuthModal'))
+const PublicArticleDetail = lazy(() => import('./features/blog/components/PublicArticleDetail'))
+const AuthorDashboard = lazy(() => import('./features/blog/components/AuthorDashboard'))
+const AdminDashboard = lazy(() => import('./features/admin/components/AdminDashboard'))
 
 export function parseRoute(path) {
   if (path === '/' || path === '/public') return { name: 'list' }
@@ -83,11 +84,15 @@ export default function App() {
   if (!ready || redirect) return <p role="status" className="p-8">Memuat...</p>
 
   if (route.name === 'login' || route.name === 'register') {
-    return <AuthPage mode={route.name} navigate={navigate} onAuthenticated={handleAuthenticated} />
+    return (
+      <Suspense fallback={<p role="status" className="p-8">Memuat...</p>}>
+        <AuthPage mode={route.name} navigate={navigate} onAuthenticated={handleAuthenticated} />
+      </Suspense>
+    )
   }
 
   return (
-    <>
+    <Suspense fallback={<p role="status" className="p-8">Memuat...</p>}>
       <StickyNavbar user={user} navigate={navigate} onLogin={() => setShowLogin(true)} onLogout={handleLogout} theme={theme} />
       {route.name === 'list' && <PublicArticleList navigate={navigate} />}
       {route.name === 'detail' && <PublicArticleDetail slug={route.slug} navigate={navigate} />}
@@ -108,6 +113,6 @@ export default function App() {
           }}
         />
       )}
-    </>
+    </Suspense>
   )
 }

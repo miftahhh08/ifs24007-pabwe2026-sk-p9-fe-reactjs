@@ -13,7 +13,7 @@ export default function PublicArticleList({ navigate }) {
   useEffect(() => {
     let active = true
     setLoading(true)
-    const timer = setTimeout(() => {
+    const run = () =>
       listPublicPosts({ q: q.trim(), category: category === 'Semua' ? '' : category })
         .then((data) => {
           if (active) {
@@ -23,7 +23,13 @@ export default function PublicArticleList({ navigate }) {
         })
         .catch((err) => active && setError(err.message))
         .finally(() => active && setLoading(false))
-    }, q ? 300 : 0)
+    if (!q) {
+      run()
+      return () => {
+        active = false
+      }
+    }
+    const timer = setTimeout(run, 300)
     return () => {
       active = false
       clearTimeout(timer)
