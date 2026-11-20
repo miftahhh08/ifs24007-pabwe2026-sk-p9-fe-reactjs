@@ -78,7 +78,7 @@ describe('App', () => {
     expect(screen.getByText('page:detail:a b')).toBeInTheDocument()
     expect(window.location.pathname).toBe('/posts/a%20b')
     await userEvent.click(screen.getByText('nav-404'))
-    expect(screen.getByText(/404/)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /404/ })).toBeInTheDocument()
     await userEvent.click(screen.getByText('nav-public'))
     expect(screen.getByText('page:list')).toBeInTheDocument()
   })

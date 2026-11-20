@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import PublicArticleList from './PublicArticleList'
 import { listPublicPosts } from '../api/blogApi'
@@ -44,18 +44,21 @@ describe('PublicArticleList', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Server mati')
   })
 
-  it('mengabaikan respons setelah unmount (sukses dan gagal)', async () => {
+  it('mengabaikan respons sukses setelah unmount', async () => {
     let resolve
-    let reject
     listPublicPosts.mockReturnValueOnce(new Promise((r) => { resolve = r }))
-    const first = render(<PublicArticleList navigate={() => {}} />)
-    first.unmount()
-    resolve([post])
+    const view = render(<PublicArticleList navigate={() => {}} />)
+    await waitFor(() => expect(listPublicPosts).toHaveBeenCalledTimes(1))
+    view.unmount()
+    await act(async () => { resolve([post]) })
+  })
+
+  it('mengabaikan respons gagal setelah unmount', async () => {
+    let reject
     listPublicPosts.mockReturnValueOnce(new Promise((_, r) => { reject = r }))
-    const second = render(<PublicArticleList navigate={() => {}} />)
-    second.unmount()
-    reject(new Error('x'))
-    await Promise.resolve()
-    expect(listPublicPosts).toHaveBeenCalledTimes(2)
+    const view = render(<PublicArticleList navigate={() => {}} />)
+    await waitFor(() => expect(listPublicPosts).toHaveBeenCalledTimes(1))
+    view.unmount()
+    await act(async () => { reject(new Error('x')) })
   })
 })

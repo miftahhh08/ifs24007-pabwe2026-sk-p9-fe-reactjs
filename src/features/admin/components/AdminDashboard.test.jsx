@@ -36,18 +36,23 @@ describe('AdminDashboard', () => {
     expect(await screen.findByText('Arsip Semua Artikel (2)')).toBeInTheDocument()
   })
 
-  it('error saat memuat, filter pengguna, dan tampilkan semua', async () => {
+  it('error saat memuat data admin', async () => {
     api.listUsers.mockRejectedValueOnce(new Error('403'))
     render(<AdminDashboard />)
     await waitFor(() => expect(showAlert).toHaveBeenCalledWith('error', 'Gagal memuat data admin', '403'))
+  })
 
+  it('error saat memuat artikel pengguna', async () => {
     api.listUserPosts.mockRejectedValueOnce(new Error('u'))
     render(<AdminDashboard />)
     await userEvent.click(await screen.findByRole('button', { name: 'Lihat artikel sari' }))
     await waitFor(() => expect(showAlert).toHaveBeenCalledWith('error', 'Gagal memuat artikel pengguna', 'u'))
+  })
 
+  it('error saat tampilkan semua artikel', async () => {
     api.listUserPosts.mockResolvedValueOnce([all[0]])
-    await userEvent.click(screen.getAllByRole('button', { name: 'Lihat artikel sari' })[1])
+    render(<AdminDashboard />)
+    await userEvent.click(await screen.findByRole('button', { name: 'Lihat artikel sari' }))
     await screen.findByText('Artikel oleh sari (1)')
     api.listAllPosts.mockRejectedValueOnce(new Error('a'))
     await userEvent.click(screen.getByRole('button', { name: 'Tampilkan semua' }))
