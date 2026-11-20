@@ -1,0 +1,24 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root { --accent: #4338ca; --accent-hover: #3730a3; }
+[data-accent="emerald"] { --accent: #047857; --accent-hover: #065f46; }
+[data-accent="rose"] { --accent: #be123c; --accent-hover: #9f1239; }
+[data-accent="amber"] { --accent: #b45309; --accent-hover: #92400e; }
+
+body { margin: 0; background: #f8fafc; color: #0f172a; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.dark body { background: #0b1120; color: #e2e8f0; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; border-radius: .5rem; padding: .5rem 1rem; font-size: .875rem; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+.btn:focus-visible, .input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+.btn-ghost { background: transparent; color: inherit; border-color: #64748b; }
+.btn-danger { background: #b91c1c; color: #fff; }
+.input { width: 100%; border-radius: .5rem; border: 1px solid #64748b; padding: .5rem .75rem; background: #fff; color: #0f172a; }
+.dark .input { background: #0f172a; color: #f1f5f9; border-color: #94a3b8; }
+.muted { color: #475569; }
+.dark .muted { color: #cbd5e1; }
+.card { border-radius: .75rem; border: 1px solid #cbd5e1; background: #fff; }
+.dark .card { border-color: #334155; background: #111827; }
