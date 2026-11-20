@@ -29,6 +29,18 @@ export default defineConfig(({ mode }) => {
   return {
   // Alamat backend untuk build produksi (kosong = pakai proxy /api saat dev)
   define: { __API_BASE__: JSON.stringify(env.VITE_API_BASE_URL || '') },
+  resolve:
+    mode === 'test'
+      ? {}
+      : {
+          alias: {
+            'react-dom/test-utils': 'preact/test-utils',
+            'react-dom/client': 'preact/compat/client',
+            'react-dom': 'preact/compat',
+            'react/jsx-runtime': 'preact/jsx-runtime',
+            react: 'preact/compat',
+          },
+        },
   plugins: [react(), tailwindcss(), inlineMainCss()],
   build: {
     target: 'esnext',

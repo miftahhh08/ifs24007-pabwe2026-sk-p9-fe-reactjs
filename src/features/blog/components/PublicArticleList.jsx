@@ -62,7 +62,21 @@ export default function PublicArticleList({ navigate }) {
       </div>
 
       {error && <p role="alert" className="mt-6 rounded-lg bg-red-100 px-3 py-2 font-medium text-red-900">{error}</p>}
-      {loading && <p className="muted mt-6" role="status">Memuat artikel...</p>}
+      {loading && (
+        <>
+          <p className="muted mt-6" role="status">Memuat artikel...</p>
+          <div aria-hidden="true" className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3, 4, 5, 6].map((n) => (
+              <div key={n} className="card flex flex-col p-5">
+                <span className="mb-2 h-5 w-20 rounded-full bg-slate-200 dark:bg-slate-700" />
+                <div className="h-6 w-3/4 rounded bg-slate-900/80 dark:bg-slate-100/80" />
+                <div className="mt-3 h-4 w-full rounded bg-slate-300 dark:bg-slate-700" />
+                <div className="mt-4 h-3 w-1/2 rounded bg-slate-300 dark:bg-slate-700" />
+              </div>
+            ))}
+          </div>
+        </>
+      )}
       {!loading && !error && posts.length === 0 && <p className="muted mt-6">Belum ada artikel yang cocok.</p>}
 
       <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

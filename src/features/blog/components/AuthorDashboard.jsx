@@ -82,7 +82,7 @@ export default function AuthorDashboard({ dark }) {
 
       <PostStats stats={stats} />
 
-      <div className="card overflow-x-auto" role="region" aria-label="Tabel daftar artikel" tabIndex={0}>
+      <div className="card overflow-x-auto">
         <table className="w-full text-left text-sm">
           <caption className="sr-only">Daftar artikel milik Anda</caption>
           <thead className="bg-slate-200 text-slate-900 dark:bg-slate-800 dark:text-slate-100">

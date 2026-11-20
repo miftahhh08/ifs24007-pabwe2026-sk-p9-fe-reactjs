@@ -44,7 +44,7 @@ export default function AdminDashboard() {
 
       <section aria-labelledby="users-title">
         <h2 id="users-title" className="mb-3 text-xl font-semibold">Direktori Pengguna ({users.length})</h2>
-        <div className="card overflow-x-auto" role="region" aria-labelledby="users-title" tabIndex={0}>
+        <div className="card overflow-x-auto">
           <table className="w-full text-left text-sm">
             <caption className="sr-only">Daftar pengguna sistem</caption>
             <thead className="bg-slate-200 text-slate-900 dark:bg-slate-800 dark:text-slate-100">
@@ -83,7 +83,7 @@ export default function AdminDashboard() {
           </h2>
           {selected && <button type="button" onClick={showAll} className="btn btn-ghost">Tampilkan semua</button>}
         </div>
-        <div className="card overflow-x-auto" role="region" aria-labelledby="posts-title" tabIndex={0}>
+        <div className="card overflow-x-auto">
           <table className="w-full text-left text-sm">
             <caption className="sr-only">Arsip artikel</caption>
             <thead className="bg-slate-200 text-slate-900 dark:bg-slate-800 dark:text-slate-100">

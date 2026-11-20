@@ -8,12 +8,36 @@
     <link rel="preconnect" href="https://ifs24007-pabwe2026-sk-p9-be-golang-gin.s1if.cloud" crossorigin />
     <link rel="icon" href="data:," />
     <title>Delcom Blog</title>
+    <script>
+      if (location.pathname === '/' || location.pathname === '/public') {
+        const u = 'https://ifs24007-pabwe2026-sk-p9-be-golang-gin.s1if.cloud/api/public/posts', f = window.fetch.bind(window)
+        let p = f(u, { headers: { Accept: 'application/json' } })
+        window.fetch = (url, init) => {
+          if (p && url === u) { const r = p; p = null; return r }
+          return f(url, init)
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="root">
+      <header class="sticky top-0 z-30 border-b border-slate-300 bg-white dark:border-slate-700 dark:bg-slate-900">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+          <span class="text-lg font-bold">Delcom Blog</span>
+          <span class="btn btn-primary">Masuk</span>
+        </div>
+      </header>
       <main class="mx-auto max-w-7xl px-4 py-8">
         <h1 class="text-3xl font-bold">Artikel Terbaru</h1>
         <p class="muted mt-1">Baca artikel dari para penulis Delcom Blog.</p>
+        <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="card p-5"><div class="h-24"></div></div>
+          <div class="card p-5"><div class="h-24"></div></div>
+          <div class="card p-5"><div class="h-24"></div></div>
+          <div class="card p-5"><div class="h-24"></div></div>
+          <div class="card p-5"><div class="h-24"></div></div>
+          <div class="card p-5"><div class="h-24"></div></div>
+        </div>
       </main>
     </div>
     <script type="module" src="/src/main.jsx"></script>
